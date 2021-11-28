@@ -1,7 +1,17 @@
 import Graphics.Gloss
 
-picList = pictures ((pic):(lineLoop [(-300, 300), (-100, 300), (-100, 100), (-300, 100)]):[]) 
-pic = Color white (Polygon [(-300, 300), (-100, 300), (-100, 100), (-300, 100)])
+
+data Player = Player1 | Player2 deriving (Show, Eq) -- Player1 = X's, Player2 = O's
+--type Tile = [Path] -- Individual tiles of board
+
+tileSize = 200
+boardSize = 600
+tile1 = (Color white (Polygon [(-300, 300), (-100, 300), (-100, 100), (-300, 100)])):
+    (lineLoop [(-300, 300), (-100, 300), (-100, 100), (-300, 100)]):[]
+tile2 = (Color white (Polygon [(-100, 300), (100, 300), (100, 100), (-100, 100)])):
+    (lineLoop [(-100, 300), (100, 300), (100, 100), (-100, 100)]):[]
+
+picList = pictures (tile1 ++ tile2)
 
 main :: IO ()
-main = display (InWindow "Tic-Tac-Toe" (600, 600) (500, 250)) white picList
+main = display (InWindow "Tic-Tac-Toe" (boardSize, boardSize) (500, 250)) white picList

@@ -2,11 +2,10 @@ module Main where
 
 import Graphics.Gloss
 import Game
+import Paint
+import Logic 
 
-inputEventHandler = undefined
-worldToPicture = undefined
-
-window = InWindow "Tic-Tac_Toe" (500, 500) (500, 250)
+window = InWindow "Tic-Tac_Toe" (600, 600) (500, 250)
 
 main :: IO ()
 main = play window white 30 startWorld worldToPicture inputEventHandler (const id)
