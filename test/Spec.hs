@@ -11,7 +11,7 @@ boardSize = 600
 tile2 = (Color white (Polygon [(-100, 300), (100, 300), (100, 100), (-100, 100)])):
     (lineLoop [(-100, 300), (100, 300), (100, 100), (-100, 100)]):[]
 -}
-picList = pictures ((rotate (90.0) (line [(-275, 275), (-63, 275)])):((line [(-275, 275), (-63, 275)])):[])
+picList = pictures [translate 0 (-50) (Color red (line [(-275, 275), (-63, 275)])), (line [(-275, 275), (-63, 275)])]
 
 main :: IO ()
 main = display (InWindow "Tic-Tac-Toe" (boardSize, boardSize) (500, 250)) white picList

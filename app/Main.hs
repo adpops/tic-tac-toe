@@ -7,5 +7,5 @@ import Logic
 
 
 main :: IO ()
---main = play window white 30 startWorld worldToPicture inputEventHandler (const id)
-main = display window white (worldToPicture startWorld)
+main = play window white 30 startWorld worldToPicture inputEventHandler (const id)
+--main = display window white (worldToPicture startWorld)

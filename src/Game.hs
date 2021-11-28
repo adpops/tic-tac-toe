@@ -16,16 +16,16 @@ data World = World
                  } deriving (Show, Eq)
 
 startWorld = World 
-              { board  = zip (range ((0, 0), (numOfCells - 1, numOfCells - 1))) (repeat (Just Player1))
+              { board  = zip (range ((0, 0), (numOfCells - 1, numOfCells - 1))) (repeat Nothing)
               , player = Player1
               , state  = GameOn
               }       
 
 windowHeight = 600
 windowWidth = 600
-cellHeight :: Float
-cellHeight = fromIntegral windowHeight / 3
-cellWidth :: Float
-cellWidth = fromIntegral windowWidth / 3
+tileHeight :: Float
+tileHeight = fromIntegral windowHeight / 3
+tileWidth :: Float
+tileWidth = fromIntegral windowWidth / 3
 numOfCells = 3
 window = InWindow "Tic-Tac_Toe" (windowWidth, windowHeight) (500, 250)   
