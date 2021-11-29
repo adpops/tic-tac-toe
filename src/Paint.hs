@@ -3,32 +3,32 @@ module Paint where
 import Game
 import Graphics.Gloss
 
-getGridPath x = [ line [(x * tileWidth - (fromIntegral windowWidth)/(fromIntegral numOfCells - 1), 0.0 + 300)
-                       , (x * tileWidth - (fromIntegral windowWidth)/(fromIntegral numOfCells - 1), (fromIntegral (-windowHeight))/2)
-                       ]
-                , line [ (0 - (fromIntegral windowHeight) / (fromIntegral numOfCells - 1), x * tileHeight - (fromIntegral windowHeight) / (fromIntegral numOfCells - 1))
-                       , (fromIntegral windowWidth/2, x * tileHeight - (fromIntegral windowHeight) / (fromIntegral numOfCells - 1))
-                       ]
-                ]       
-boardGrid = pictures (concatMap getGridPath [0..3])
 
-thickLine x y = Color red (Polygon [ (-275 + tileWidth * x, 275 - tileHeight * y)
-                                   , (-63 + tileWidth * x, 275 - tileWidth * y)
-                                   , (-63 + tileWidth * x, 265 - tileWidth * y)
-                                   , (-275 + tileWidth * x, 265 - tileWidth * y)])
+getGridPath x = [ line [(x * tileWidth - (fromIntegral windowWidth)/ 2, 0.0 + 300)
+                       , (x * tileWidth - (fromIntegral windowWidth)/ 2, (fromIntegral (-windowHeight)) / 2)
+                       ]
+                , line [ (0 - (fromIntegral windowHeight) / 2, x * tileHeight - (fromIntegral windowHeight) / 2)
+                       , ((fromIntegral windowWidth) / 2, x * tileHeight - (fromIntegral windowHeight) / 2)
+                       ]
+                ] 
+boardGrid :: Picture
+boardGrid = pictures (concatMap getGridPath [0.. (fromIntegral numOfCells)])
                                     
-
+xTile :: Color -> Picture
 xTile col = pictures [ Color col (rotate 45.0 $ rectangleSolid ((min tileWidth tileHeight) * 0.75) 10.0)
                  , Color col (rotate (-45.0) $ rectangleSolid ((min tileWidth tileHeight) * 0.75) 10.0) ]
 
+oTile :: Color -> Picture
 oTile col = Color col (thickCircle ((min tileWidth tileHeight) * 0.25) 10.0)
 
+translatePic :: Picture -> (Int, Int) -> Picture
 translatePic tile (x, y) = translate newX newY tile where
     newX = (-tileWidth) + (fromIntegral x) * tileWidth
     newY = tileHeight - (fromIntegral y) * tileHeight
     
-    
+getXPicture :: Color -> [(Int, Int)] -> Picture    
 getXPicture col lst = pictures $ map (translatePic (xTile col)) lst
+getOPicture :: Color -> [(Int, Int)] -> Picture  
 getOPicture col lst = pictures $ map (translatePic (oTile col)) lst
 
 findTileXY :: Board -> Tile -> [(Int, Int)]
