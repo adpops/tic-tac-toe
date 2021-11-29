@@ -35,13 +35,13 @@ getClickedTile :: Board -> (Float, Float) -> Tile
 getClickedTile board pos = getTile (getTileX (fst pos) board) (getTileY (snd pos) board) board
 
 changeBoard :: Board -> Player -> (Float, Float) -> Board
-changeBoard board player pos = undefined
+changeBoard board player pos = board
 
 changePlayer :: Board -> Player -> Player
-changePlayer board player = undefined
+changePlayer board player = player
 
 isGameOver :: Board -> Player -> GameState
-isGameOver board player = undefined
+isGameOver board player = GameOn
 
 playGame :: World -> (Float, Float) -> World
 playGame world mousePos = if getClickedTile (board world) mousePos == Nothing then
