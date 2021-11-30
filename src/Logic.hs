@@ -28,7 +28,6 @@ getTileY y board = if y <= (fromIntegral windowHeight)/2 - tileHeight * boardTil
 getTile :: Int -> Int -> Board -> Board
 getTile _ _ [a] = [a]
 getTile x y board = if x == boardTileX && y == boardTileY then 
-                        trace ("Tile coordinates: " ++ (show (fst (head board))))
                         [head board]
                     else 
                         getTile x y (tail board)
@@ -52,24 +51,40 @@ changeBoard board player tileInfo = if (boardTileX, boardTileY) == fst (head boa
 changePlayer :: Board -> Player -> Player
 changePlayer board player = if player == Player1 then Player2 else Player1
 
+didPlayerWin :: Board -> Player -> Bool
+didPlayerWin board player = False
+
+
+isBoardFull :: Board -> Bool
+isBoardFull [] = True
+isBoardFull board = if (snd (head board)) == Nothing then 
+                        False
+                    else
+                        isBoardFull (tail board)    
+
 isGameOver :: Board -> Player -> GameState
-isGameOver board player = GameOn
+isGameOver board player | didPlayerWin board player == True = GameOver (Just player)
+                        | isBoardFull board  == True = GameOver Nothing
+                        | otherwise = GameOn
 
 playGame :: World -> (Float, Float) -> World
 playGame world mousePos = if (snd (head currTileInfo)) == Nothing then
                               trace "Nothing Tile" 
                               World 
-                              { board = changeBoard (board world) (player world) currTileInfo
-                              , player = changePlayer (board world) (player world)
-                              , state = isGameOver (board world) (player world)
+                              { board = newBoard
+                              , player = newPlayer
+                              , state = newState
                               }
                           else
                               trace "occupied tile"   
                               world
                           where currTileInfo = getClickedTile (board world) mousePos
+                                newBoard = changeBoard (board world) (player world) currTileInfo
+                                newPlayer = changePlayer newBoard (player world)
+                                newState = isGameOver newBoard newPlayer
 
 inputEventHandler :: Event -> World -> World
-inputEventHandler (EventKey (MouseButton LeftButton) Up _ mousePos) world = 
+inputEventHandler (EventKey (MouseButton LeftButton) Down _ mousePos) world = 
     case state world of
         GameOn -> playGame world mousePos
         GameOver _ -> startWorld
