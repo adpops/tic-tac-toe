@@ -1,6 +1,6 @@
 module Game where
 
-import Graphics.Gloss
+--import Graphics.Gloss
 import Data.Ix
 
 data Player = Player1 | Player2 deriving (Show, Eq) -- Player1 = X's, Player2 = O's
@@ -28,4 +28,3 @@ tileHeight = fromIntegral windowHeight / 3
 tileWidth :: Float
 tileWidth = fromIntegral windowWidth / 3
 numOfCells = 3
-window = InWindow "Tic-Tac_Toe" (windowWidth, windowHeight) (500, 250)   

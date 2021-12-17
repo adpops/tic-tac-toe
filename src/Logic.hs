@@ -3,13 +3,11 @@ module Logic where
 import Game
 import Graphics.Gloss.Interface.Pure.Game
 import Debug.Trace
---trace ("First val: " ++ (show (fst mousePos)) ++ " Second val: " ++ (show (snd mousePos)) ++ "\n")
 
 getTileX :: Float -> Board -> Int
 --getTileX _ [] = error "x coordinates of mouse click not found"
 getTileX _ [a] = fst (fst a)
 getTileX x board = if x >= (fromIntegral (-windowWidth))/2 + tileWidth * boardTileX && x < (fromIntegral (-windowWidth))/2 + tileWidth * (boardTileX + 1) then 
-                     trace ("x coordinates of mouse : " ++ (show $ fst (fst (head board))))
                      fst (fst (head board))
                  else 
                      getTileX x (tail board)
@@ -19,7 +17,6 @@ getTileY :: Float -> Board -> Int
 --getTileY _ [] = error "y coordinates of mouse click not found"
 getTileY _ [a] = snd (fst a)
 getTileY y board = if y <= (fromIntegral windowHeight)/2 - tileHeight * boardTileY && y > (fromIntegral windowWidth)/2 - tileHeight * (boardTileY + 1) then
-                     trace ("y coordinates of mouse : " ++ (show $ snd (fst (head board))))
                      snd (fst (head board))
                  else
                      getTileY y (tail board)    
@@ -51,9 +48,22 @@ changeBoard board player tileInfo = if (boardTileX, boardTileY) == fst (head boa
 changePlayer :: Board -> Player -> Player
 changePlayer board player = if player == Player1 then Player2 else Player1
 
-didPlayerWin :: Board -> Player -> Bool
-didPlayerWin board player = False
+checkWinner :: Board -> Player -> [[(Int, Int)]] -> Bool
+checkWinner _ _ [] = True
+checkWinner board player lst = if snd (head (getTile x y board)) == (Just player) then 
+                                   checkWinner board player newLst
+                               else 
+                                   False
+                               where x = fst (head (head lst))
+                                     y = snd (head (head lst))
+                                     newLst = (tail (head lst)):(tail lst)
 
+didPlayerWin :: Board -> Player -> Bool
+didPlayerWin board player = checkWinner board player row || checkWinner board player col || checkWinner board player diag
+                            where 
+                                  row  = [[(x, y) | x <- [0..numOfCells-1]] | y <- [0..numOfCells-1]]
+                                  col  = [[(x, y) | y <- [0..numOfCells-1]] | x <- [0..numOfCells-1]]
+                                  diag = [[(x, x) | x <- [0..numOfCells-1]], [(x, y) | x <- [0..numOfCells-1], let y = (numOfCells-1) - x]]
 
 isBoardFull :: Board -> Bool
 isBoardFull [] = True
@@ -63,25 +73,23 @@ isBoardFull board = if (snd (head board)) == Nothing then
                         isBoardFull (tail board)    
 
 isGameOver :: Board -> Player -> GameState
-isGameOver board player | didPlayerWin board player == True = GameOver (Just player)
-                        | isBoardFull board  == True = GameOver Nothing
-                        | otherwise = GameOn
+isGameOver board player | didPlayerWin board player = GameOver (Just player)
+                        | isBoardFull board         = GameOver Nothing
+                        | otherwise                 = GameOn
 
 playGame :: World -> (Float, Float) -> World
 playGame world mousePos = if (snd (head currTileInfo)) == Nothing then
-                              trace "Nothing Tile" 
                               World 
-                              { board = newBoard
+                              { board  = newBoard
                               , player = newPlayer
-                              , state = newState
+                              , state  = newState
                               }
                           else
-                              trace "occupied tile"   
                               world
                           where currTileInfo = getClickedTile (board world) mousePos
-                                newBoard = changeBoard (board world) (player world) currTileInfo
-                                newPlayer = changePlayer newBoard (player world)
-                                newState = isGameOver newBoard newPlayer
+                                newBoard     = changeBoard (board world) (player world) currTileInfo
+                                newPlayer    = changePlayer newBoard (player world)
+                                newState     = isGameOver newBoard newPlayer
 
 inputEventHandler :: Event -> World -> World
 inputEventHandler (EventKey (MouseButton LeftButton) Down _ mousePos) world = 
